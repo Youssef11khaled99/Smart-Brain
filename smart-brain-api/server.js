@@ -41,7 +41,7 @@ app.post('/register', (req, res) => {
         entries: 0,
         joined: new Date(),
     })
-    res.json("added sucssfully");
+    res.json("added successfully");
 })
 
 app.listen(3000, () => {
