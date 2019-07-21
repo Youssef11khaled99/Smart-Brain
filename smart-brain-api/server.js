@@ -9,6 +9,22 @@ app.use(bodyParser.json());
 const database = {
     users : [
         {
+            id: 121,
+            name: 'youssef',
+            email: 'youssef@gmail.com',
+            password: 'password',
+            entries: 0,
+            joined: new Date(),
+        },
+        {
+            id: 122,
+            name: 'youssef',
+            email: 'youssef@gmail.com',
+            password: 'password',
+            entries: 0,
+            joined: new Date(),
+        },
+        {
             id: 123,
             name: 'youssef',
             email: 'youssef@gmail.com',
@@ -42,6 +58,15 @@ app.post('/register', (req, res) => {
         joined: new Date(),
     })
     res.json("added successfully");
+})
+
+app.get('/profile/:userId', (req, res) => {
+    const id  = req.params.userId;
+    database.users.forEach(element => {
+        if (element.id ==  id)
+            res.json(element);
+    });
+   
 })
 
 app.listen(3000, () => {
