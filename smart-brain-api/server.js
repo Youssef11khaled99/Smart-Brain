@@ -43,7 +43,7 @@ app.post('/signin', (req, res) => {
     if (req.body.email === database.users[0].email && req.body.password === database.users[0].password) {
         res.json('success');
     } else {
-        res.send(400).json("error");
+        res.status(400).json("error");
     }
 })
 
@@ -61,12 +61,32 @@ app.post('/register', (req, res) => {
 })
 
 app.get('/profile/:userId', (req, res) => {
-    const id  = req.params.userId;
-    database.users.forEach(element => {
-        if (element.id ==  id)
-            res.json(element);
+    const { userId }  = req.params;
+    let found = false;
+    database.users.forEach(user => {
+        if (user.id ==  userId) {
+            found = true;
+            res.json(user);
+        } 
     });
-   
+    if (!found) {
+        res.status(404).json("no such user");
+    }
+})
+
+app.put('/image', (req, res) => {
+    const { userId }  = req.body;
+    let found = false;
+    database.users.forEach(user => {
+        if (user.id ==  userId) {
+            found = true;
+            user.entries++;
+            return res.json(user.entries);
+        } 
+    });
+    if (!found) {
+        res.status(404).json("no such user");
+    }
 })
 
 app.listen(3000, () => {
@@ -79,7 +99,5 @@ app.listen(3000, () => {
 /register ==> POST = user
 /profile/:userId ==> GET = user
 /image ==> PUT ==> userCount
-
-
 
 */
