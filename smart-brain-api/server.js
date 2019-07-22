@@ -1,10 +1,12 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-
+const bcrypt = require('bcrypt-nodejs');
+const cors = require('cors');
 
 const app = express();
 
 app.use(bodyParser.json());
+app.use(cors());
 
 const database = {
     users : [
@@ -18,17 +20,17 @@ const database = {
         },
         {
             id: 122,
-            name: 'youssef',
-            email: 'youssef@gmail.com',
-            password: 'password',
+            name: 'ola',
+            email: 'ola@gmail.com',
+            password: 'ola',
             entries: 0,
             joined: new Date(),
         },
         {
             id: 123,
-            name: 'youssef',
-            email: 'youssef@gmail.com',
-            password: 'password',
+            name: 'roshdy',
+            email: 'roshdy@gmail.com',
+            password: 'roshdy',
             entries: 0,
             joined: new Date(),
         }
@@ -40,10 +42,11 @@ app.get('/',(req, res) => {
 })
 
 app.post('/signin', (req, res) => {
+    console.log(req.body.email + '  ' + req.body.password);
     if (req.body.email === database.users[0].email && req.body.password === database.users[0].password) {
         res.json('success');
     } else {
-        res.status(400).json("error");
+        res.status(400).json("error logging in");
     }
 })
 

@@ -54,6 +54,7 @@ class App extends Component {
       isSignedIn: false
     }
   }
+
   onChangeInput = (event) => {
     this.setState({input: event.target.value});
   }
