@@ -51,8 +51,26 @@ class App extends Component {
       imageUrl: '',
       box: {},
       route: 'signin',
-      isSignedIn: false
+      isSignedIn: false,
+      user: {
+        id: '',
+        name: '',
+        email: '',
+        entries: 0,
+        joined: ''
+      }
     }
+  }
+
+  loadUser = (data) => {
+    this.setState({user:{
+      id: data.id,
+      name: data.name,
+      email: data.email,
+      entries: data.entries,
+      joined: data.joined
+    }
+    })
   }
 
   onChangeInput = (event) => {
@@ -76,16 +94,33 @@ class App extends Component {
     this.setState({box: box});
   }
 
-  onSubmit = () => {
+  onPictureSubmit = () => {
     this.setState({ imageUrl: this.state.input});
     app.models
     .predict(
       Clarifai.FACE_DETECT_MODEL,
       this.state.input)
-    .then( response => this.displayFaceBox(this.calculateFaceLocation(response)))
+    .then( response => {
+      this.displayFaceBox(this.calculateFaceLocation(response))
+      if (response) {
+        fetch('http://localhost:3000/image', {
+          method: 'put',
+          headers: {'Content-Type': 'application/json'},
+          body: JSON.stringify({
+            userId: this.state.user.id,
+          })
+          
+        })
+        .then(response => response.json())
+        .then(count => {
+          this.setState(Object.assign(this.state.user, {entries: count}))
+        })
+      }
+      
+    })
     .catch(err => console.log(err));
   }
-
+ 
   onRouteChange = (route) => {
     if (route === 'signin') {
       this.setState({isSignedIn: false});
@@ -107,17 +142,17 @@ class App extends Component {
           {(() => {
             switch (this.state.route) {
 
-              case "signin":   return  <SignIn onRouteChange={this.onRouteChange} />;
+              case "signin":   return  <SignIn loadUser={this.loadUser} onRouteChange={this.onRouteChange} />;
 
-              case "register": return <Register onRouteChange={this.onRouteChange} />;
+              case "register": return <Register onRouteChange={this.onRouteChange} loadUser={this.loadUser}/>;
 
               default:      return (
                     <div>
                         <Logo />
-                        <Rank />
+                        <Rank name={this.state.user.name} entries={this.state.user.entries}/>
                         <ImageLinkForm 
                           onChangeInput={this.onChangeInput} 
-                          onSubmit={this.onSubmit} 
+                          onPictureSubmit={this.onPictureSubmit} 
                           />
                         <FaceRecognition box={this.state.box} imageUrl={this.state.imageUrl}/>
                       </div>
