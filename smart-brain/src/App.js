@@ -7,9 +7,7 @@ import Rank from './components/Rank/Rank';
 import ImageLinkForm from './components/ImageLinkForm/ImageLinkForm';
 import Particles from 'react-particles-js';
 import FaceRecognition from './components/FaceRecognition/FaceRecognition';
-import Clarifai from 'clarifai';
 import './App.css';
-
 
 const particlesOptions = {
   "particles": {
@@ -39,9 +37,7 @@ const particlesOptions = {
   }
 
 }
-const app = new Clarifai.App({
-  apiKey: 'a5731e15cb6349c2b12b4ddf400a7a2a'
- });
+
 const initialState= {
   input: '',
   imageUrl: '',
@@ -96,10 +92,14 @@ class App extends Component {
 
   onPictureSubmit = () => {
     this.setState({ imageUrl: this.state.input});
-    app.models
-    .predict(
-      Clarifai.FACE_DETECT_MODEL,
-      this.state.input)
+    fetch('http://localhost:3000/imageurl', {
+      method: 'post',
+      headers: {'Content-Type': 'application/json'},
+      body: JSON.stringify({
+        input: this.state.input,
+      })
+    })
+    .then( response => response.json())
     .then( response => {
       this.displayFaceBox(this.calculateFaceLocation(response))
       if (response) {
